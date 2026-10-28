@@ -1,0 +1,912 @@
+# INVENTORY & SALES MANAGEMENT SYSTEM — COMPLETE DBMS SQL NOTES
+
+## 1. Project Details
+
+**Project Name:** Inventory & Sales Management System  
+**College:** JSPM’s Rajarshi Shahu College of Engineering, Tathawade, Pune  
+**Department:** Information Technology  
+**Academic Year:** 2026–2027  
+**Faculty Guide:** Prof. Pallavi Tekade  
+
+**Team Members:**
+1. Anas Khan — Roll No. IT3205 — PRN RBT24IT067
+2. Anisha Walekar — Roll No. IT3213 — PRN RBT24IT075
+3. Harshal Pachange — Roll No. IT3202 — PRN RBT24IT064
+
+**Technology Used:**
+- Frontend: HTML, CSS, JavaScript
+- Backend: Python Flask
+- Database: MySQL/MariaDB
+- Database environment: XAMPP
+- Database connector: mysql-connector-python
+
+**Database Name:** `inventory_sales_db`
+
+## 2. What Is SQL?
+
+SQL stands for Structured Query Language. It is used to create databases and tables, insert data, retrieve data, update records, delete records, and manage database transactions.
+
+## 3. Database Creation and Basic Commands
+
+```sql
+CREATE DATABASE inventory_sales_db;
+
+SHOW DATABASES;
+
+USE inventory_sales_db;
+
+SELECT DATABASE();
+
+SHOW TABLES;
+
+SELECT VERSION();
+```
+
+Explanation:
+- `CREATE DATABASE` creates a new database.
+- `SHOW DATABASES` displays available databases.
+- `USE` selects the database.
+- `SELECT DATABASE()` shows the currently selected database.
+- `SHOW TABLES` displays tables in the selected database.
+- `SELECT VERSION()` displays the database server version.
+
+To delete a database, use:
+
+```sql
+DROP DATABASE inventory_sales_db;
+```
+
+Warning: This permanently deletes the database and its tables. Do not run it on your project database unless you intentionally want to delete everything.
+
+## 4. Checking Table Structure
+
+The project is intended to use the following tables:
+- `categories`
+- `suppliers`
+- `products`
+- `sales`
+- `sale_items`
+- `stock_movements`
+- `audit_log`
+
+Use these commands to inspect their actual structure:
+
+```sql
+USE inventory_sales_db;
+
+SHOW TABLES;
+
+DESCRIBE categories;
+DESCRIBE suppliers;
+DESCRIBE products;
+DESCRIBE sales;
+DESCRIBE sale_items;
+DESCRIBE stock_movements;
+DESCRIBE audit_log;
+
+SHOW CREATE TABLE products;
+```
+
+`DESCRIBE` displays column names, data types, keys, and other column details. The exact columns depend on your current database schema.
+
+## 5. Creating a Table — Example
+
+The following is a learning example. Check your existing schema before running it, because your project may already contain the table.
+
+```sql
+CREATE TABLE example_products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    stock_quantity INT DEFAULT 0
+);
+```
+
+Explanation:
+- `INT`: Stores integer values.
+- `VARCHAR(100)`: Stores text up to 100 characters.
+- `DECIMAL(10,2)`: Stores numbers with two decimal places.
+- `PRIMARY KEY`: Uniquely identifies each record.
+- `AUTO_INCREMENT`: Automatically generates an ID.
+- `NOT NULL`: Does not allow an empty value.
+- `DEFAULT 0`: Uses zero when no value is supplied.
+
+## 6. Inserting Data — INSERT
+
+```sql
+INSERT INTO example_products
+(product_name, price, stock_quantity)
+VALUES
+('Keyboard', 799.00, 10);
+
+INSERT INTO example_products
+(product_name, price, stock_quantity)
+VALUES
+('Mouse', 499.00, 20);
+```
+
+To insert multiple rows:
+
+```sql
+INSERT INTO example_products
+(product_name, price, stock_quantity)
+VALUES
+('Monitor', 8500.00, 5),
+('USB Cable', 199.00, 30);
+```
+
+Note: These examples use `example_products`, not your actual project table.
+
+## 7. Retrieving Data — SELECT
+
+Display all columns:
+
+```sql
+SELECT * FROM products;
+```
+
+Display selected columns:
+
+```sql
+SELECT product_id, name, selling_price, stock_quantity
+FROM products;
+```
+
+The column names above are examples based on the project description. Use the exact names shown by `DESCRIBE products`.
+
+Display unique values:
+
+```sql
+SELECT DISTINCT category_id
+FROM products;
+```
+
+Display only five rows:
+
+```sql
+SELECT * FROM products
+LIMIT 5;
+```
+
+## 8. Filtering Data — WHERE
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity < 10;
+```
+
+Find products with stock equal to zero:
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity = 0;
+```
+
+Find products whose selling price is greater than ₹1,000:
+
+```sql
+SELECT *
+FROM products
+WHERE selling_price > 1000;
+```
+
+Use multiple conditions:
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity > 0
+AND selling_price > 1000;
+```
+
+Use OR:
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity = 0
+OR stock_quantity < reorder_level;
+```
+
+Use BETWEEN:
+
+```sql
+SELECT *
+FROM products
+WHERE selling_price BETWEEN 500 AND 2000;
+```
+
+Use IN:
+
+```sql
+SELECT *
+FROM products
+WHERE category_id IN (1, 2, 3);
+```
+
+Search using LIKE:
+
+```sql
+SELECT *
+FROM products
+WHERE name LIKE '%phone%';
+```
+
+`%phone%` finds names containing “phone”. Adjust the column name if your schema differs.
+
+## 9. Sorting and Limiting Results
+
+Sort by price from low to high:
+
+```sql
+SELECT *
+FROM products
+ORDER BY selling_price ASC;
+```
+
+Sort by price from high to low:
+
+```sql
+SELECT *
+FROM products
+ORDER BY selling_price DESC;
+```
+
+Show the first five most expensive products:
+
+```sql
+SELECT *
+FROM products
+ORDER BY selling_price DESC
+LIMIT 5;
+```
+
+## 10. Updating Records — UPDATE
+
+```sql
+UPDATE products
+SET stock_quantity = 25
+WHERE product_id = 1;
+```
+
+Change a product's selling price:
+
+```sql
+UPDATE products
+SET selling_price = 999.00
+WHERE product_id = 1;
+```
+
+Important: Always check the `WHERE` condition before executing an UPDATE. Without it, every row may be updated.
+
+## 11. Deleting Records — DELETE
+
+```sql
+DELETE FROM example_products
+WHERE product_id = 1;
+```
+
+This deletes the row with ID 1 from the example table.
+
+Warning: Do not run DELETE commands on your actual project data without checking the condition and understanding any foreign-key restrictions.
+
+## 12. Aggregate Functions
+
+Aggregate functions calculate results from multiple rows.
+
+Count all products:
+
+```sql
+SELECT COUNT(*) AS total_products
+FROM products;
+```
+
+Calculate total stock:
+
+```sql
+SELECT COALESCE(SUM(stock_quantity), 0) AS total_stock
+FROM products;
+```
+
+Find the average selling price:
+
+```sql
+SELECT AVG(selling_price) AS average_price
+FROM products;
+```
+
+Find the lowest price:
+
+```sql
+SELECT MIN(selling_price) AS minimum_price
+FROM products;
+```
+
+Find the highest price:
+
+```sql
+SELECT MAX(selling_price) AS maximum_price
+FROM products;
+```
+
+`COALESCE` returns zero if the SUM result is NULL.
+
+## 13. GROUP BY and HAVING
+
+`GROUP BY` groups rows with the same value. `HAVING` filters grouped results.
+
+Example: Count products in each category.
+
+```sql
+SELECT category_id, COUNT(*) AS product_count
+FROM products
+GROUP BY category_id;
+```
+
+Show categories with more than five products:
+
+```sql
+SELECT category_id, COUNT(*) AS product_count
+FROM products
+GROUP BY category_id
+HAVING COUNT(*) > 5;
+```
+
+## 14. JOIN Operations
+
+JOIN combines information from related tables.
+
+### INNER JOIN
+
+Returns only records that match in both tables.
+
+```sql
+SELECT p.*, c.*
+FROM products AS p
+INNER JOIN categories AS c
+ON p.category_id = c.category_id;
+```
+
+This example assumes that both tables use the indicated column names.
+
+### LEFT JOIN
+
+Returns all rows from the left table and matching rows from the right table. If no match exists, right-table columns contain NULL.
+
+```sql
+SELECT p.*, c.*
+FROM products AS p
+LEFT JOIN categories AS c
+ON p.category_id = c.category_id;
+```
+
+### RIGHT JOIN
+
+Returns all rows from the right table and matching rows from the left table.
+
+```sql
+SELECT p.*, c.*
+FROM products AS p
+RIGHT JOIN categories AS c
+ON p.category_id = c.category_id;
+```
+
+Important: These are examples. The actual JOIN type used by your Flask application must be confirmed by checking `app.py` and your table structure.
+
+## 15. Project-Specific SQL Queries
+
+### A. Display all products
+
+```sql
+SELECT *
+FROM products;
+```
+
+### B. Count total products
+
+```sql
+SELECT COUNT(*) AS total_products
+FROM products;
+```
+
+### C. Calculate total stock quantity
+
+```sql
+SELECT COALESCE(SUM(stock_quantity), 0) AS total_stock
+FROM products;
+```
+
+### D. Find low-stock products
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity <= reorder_level;
+```
+
+This follows the project's documented low-stock rule.
+
+### E. Count low-stock products
+
+```sql
+SELECT COUNT(*) AS low_stock_count
+FROM products
+WHERE stock_quantity <= reorder_level;
+```
+
+### F. Find out-of-stock products
+
+```sql
+SELECT *
+FROM products
+WHERE stock_quantity = 0;
+```
+
+### G. Find products below the reorder level
+
+```sql
+SELECT product_id, name, stock_quantity, reorder_level
+FROM products
+WHERE stock_quantity < reorder_level;
+```
+
+This uses a strict less-than condition, so it is different from the dashboard rule `stock_quantity <= reorder_level`.
+
+### H. Calculate the stock purchase value
+
+```sql
+SELECT COALESCE(
+    SUM(purchase_price * stock_quantity), 0
+) AS total_stock_purchase_value
+FROM products;
+```
+
+This calculates an estimated value using purchase price and current stock. It is not necessarily the same as profit or sales revenue.
+
+### I. Search for a product by name
+
+```sql
+SELECT *
+FROM products
+WHERE name LIKE '%keyboard%';
+```
+
+### J. Find products in a particular category
+
+```sql
+SELECT *
+FROM products
+WHERE category_id = 1;
+```
+
+### K. Display product and category details
+
+```sql
+SELECT p.name, c.category_name
+FROM products AS p
+INNER JOIN categories AS c
+ON p.category_id = c.category_id;
+```
+
+This query assumes `category_name` exists in `categories`. Confirm the actual column names before running it.
+
+### L. Display sales records
+
+```sql
+SELECT *
+FROM sales;
+```
+
+### M. Display sale item records
+
+```sql
+SELECT *
+FROM sale_items;
+```
+
+### N. Display stock movement records
+
+```sql
+SELECT *
+FROM stock_movements;
+```
+
+### O. Display audit log records
+
+```sql
+SELECT *
+FROM audit_log;
+```
+
+The last four queries display records only. They do not prove that a particular sales, stock-movement, or audit-log workflow is implemented in the application.
+
+## 16. Constraints
+
+Constraints help maintain correct and reliable data.
+
+- `PRIMARY KEY`: Uniquely identifies a row.
+- `FOREIGN KEY`: Connects related tables.
+- `NOT NULL`: Prevents NULL values in a column.
+- `UNIQUE`: Prevents duplicate values.
+- `DEFAULT`: Sets a default value.
+- `CHECK`: Enforces a condition, subject to database version and configuration.
+
+Example:
+
+```sql
+CREATE TABLE example_categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(100) NOT NULL UNIQUE
+);
+```
+
+Example foreign key:
+
+```sql
+CREATE TABLE example_items (
+    item_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_id INT,
+    FOREIGN KEY (category_id)
+        REFERENCES example_categories(category_id)
+);
+```
+
+These are demonstration tables, not instructions to replace your current schema.
+
+## 17. ALTER TABLE
+
+Add a column:
+
+```sql
+ALTER TABLE example_products
+ADD description VARCHAR(255);
+```
+
+Modify a column:
+
+```sql
+ALTER TABLE example_products
+MODIFY product_name VARCHAR(150) NOT NULL;
+```
+
+Rename a table:
+
+```sql
+RENAME TABLE example_products TO products_backup;
+```
+
+Warning: Schema changes can affect your application. Do not run these commands on the project database without first checking the existing structure and making a backup.
+
+## 18. Transactions
+
+A transaction groups database operations into a unit of work.
+
+```sql
+START TRANSACTION;
+
+UPDATE example_products
+SET stock_quantity = stock_quantity - 1
+WHERE product_id = 1;
+
+COMMIT;
+```
+
+`COMMIT` saves the transaction.
+
+To cancel uncommitted changes:
+
+```sql
+START TRANSACTION;
+
+UPDATE example_products
+SET stock_quantity = stock_quantity - 1
+WHERE product_id = 1;
+
+ROLLBACK;
+```
+
+`ROLLBACK` cancels changes made during the current transaction, provided they have not already been committed and the storage engine supports transactions.
+
+Create a savepoint:
+
+```sql
+START TRANSACTION;
+
+SAVEPOINT first_step;
+
+UPDATE example_products
+SET stock_quantity = stock_quantity + 5
+WHERE product_id = 1;
+
+ROLLBACK TO first_step;
+
+COMMIT;
+```
+
+These are transaction demonstrations, not confirmation that the current project uses transactions in its code.
+
+## 19. Indexes
+
+An index can improve the speed of certain searches, but it also uses storage and can make inserts or updates more expensive.
+
+Create an index:
+
+```sql
+CREATE INDEX idx_product_name
+ON products(name);
+```
+
+Show indexes:
+
+```sql
+SHOW INDEX FROM products;
+```
+
+Drop the example index:
+
+```sql
+DROP INDEX idx_product_name ON products;
+```
+
+Check for an existing index before creating or dropping one.
+
+## 20. Views
+
+A view is a saved SELECT query that can be used like a virtual table.
+
+Example:
+
+```sql
+CREATE VIEW low_stock_products AS
+SELECT *
+FROM products
+WHERE stock_quantity <= reorder_level;
+```
+
+Use the view:
+
+```sql
+SELECT *
+FROM low_stock_products;
+```
+
+Delete the view:
+
+```sql
+DROP VIEW low_stock_products;
+```
+
+Create this view only if it is useful and does not conflict with an existing object.
+
+## 21. Useful Database Inspection Commands
+
+```sql
+SHOW DATABASES;
+
+USE inventory_sales_db;
+
+SHOW TABLES;
+
+DESCRIBE products;
+
+SHOW CREATE TABLE products;
+
+SELECT COUNT(*) FROM products;
+
+SELECT * FROM products LIMIT 10;
+
+SELECT VERSION();
+
+SELECT DATABASE();
+```
+
+These commands help inspect the database without deliberately changing its data.
+
+## 22. DDL, DML, DQL, DCL and TCL
+
+**DDL — Data Definition Language:** Used to define database structures.
+
+Examples: `CREATE`, `ALTER`, `DROP`, `TRUNCATE`.
+
+**DML — Data Manipulation Language:** Used to modify data.
+
+Examples: `INSERT`, `UPDATE`, `DELETE`.
+
+**DQL — Data Query Language:** Used to retrieve data.
+
+Example: `SELECT`.
+
+**DCL — Data Control Language:** Used to control database permissions.
+
+Examples: `GRANT`, `REVOKE`.
+
+**TCL — Transaction Control Language:** Used to manage transactions.
+
+Examples: `COMMIT`, `ROLLBACK`, `SAVEPOINT`.
+
+## 23. How the Project Works
+
+1. The user opens the application in a browser.
+2. The browser sends a request to the Flask backend.
+3. The Flask route in `app.py` processes the request.
+4. The database connection code in `db.py` connects to MySQL/MariaDB.
+5. SQL queries retrieve the required product and category information.
+6. Python processes the retrieved information and calculates dashboard figures.
+7. Flask sends the results to the HTML template.
+8. The browser displays the dashboard.
+
+The documented homepage address is:
+
+`http://127.0.0.1:5000/`
+
+The database dashboard is documented to calculate:
+- Total products.
+- Total stock quantity.
+- Number of low-stock products.
+
+The low-stock condition is:
+
+`stock_quantity <= reorder_level`
+
+## 24. Starting the Project
+
+1. Open XAMPP Control Panel.
+2. Start MySQL.
+3. Open the project folder in VS Code.
+4. Open the terminal in the project folder.
+5. Activate the virtual environment, if it exists:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+6. Optionally test the database connection:
+
+```powershell
+python test_db.py
+```
+
+7. Start the Flask application:
+
+```powershell
+python app.py
+```
+
+8. Open this URL in your browser:
+
+`http://127.0.0.1:5000/`
+
+Keep the terminal open while using the application. Press `Ctrl+C` in the terminal to stop the server.
+
+If the virtual environment or test file is missing, use the setup instructions for your actual project files rather than assuming these files exist.
+
+## 25. Viva Questions and Answers
+
+**Q1. What is DBMS?**  
+DBMS stands for Database Management System. It is software used to store, manage, retrieve, and update data.
+
+**Q2. What is SQL?**  
+SQL stands for Structured Query Language. It is used to communicate with relational databases.
+
+**Q3. What is MariaDB?**  
+MariaDB is a relational database management system compatible with many MySQL tools and workflows.
+
+**Q4. What is a primary key?**  
+A primary key uniquely identifies each row in a table.
+
+**Q5. What is a foreign key?**  
+A foreign key links related tables and helps maintain referential integrity.
+
+**Q6. What is a JOIN?**  
+A JOIN combines related information from two or more tables.
+
+**Q7. What is the difference between WHERE and HAVING?**  
+WHERE filters rows before grouping. HAVING filters grouped results.
+
+**Q8. What is the difference between DELETE and DROP?**  
+DELETE removes rows from a table. DROP removes a database object, such as a table or database.
+
+**Q9. What is Flask?**  
+Flask is a lightweight Python web framework used to build web applications.
+
+**Q10. Why is MySQL/MariaDB used in this project?**  
+It stores and manages inventory and sales-related records in structured tables.
+
+**Q11. What is XAMPP?**  
+XAMPP is a software package that provides a local development environment, including a database server.
+
+**Q12. What is the purpose of the products table?**  
+It stores product-related information. The exact columns should be explained using the actual table structure.
+
+**Q13. What is the purpose of the categories table?**  
+It is intended to organize products into categories.
+
+**Q14. What is the purpose of the suppliers table?**  
+It is intended to store supplier-related information.
+
+**Q15. What is the purpose of the sales table?**  
+It is intended to store sale-related records.
+
+**Q16. What is the purpose of the sale_items table?**  
+It is intended to store item-level details associated with sales.
+
+**Q17. What is the purpose of the stock_movements table?**  
+It is intended to record stock movement information.
+
+**Q18. What is the purpose of the audit_log table?**  
+It is intended to record activity or change information for auditing.
+
+Note: The presence of a table does not by itself prove that the related functionality is implemented.
+
+**Q19. How is low stock identified in the dashboard?**  
+The documented condition is `stock_quantity <= reorder_level`.
+
+**Q20. How do you count products?**
+
+```sql
+SELECT COUNT(*) FROM products;
+```
+
+**Q21. How do you calculate total stock?**
+
+```sql
+SELECT COALESCE(SUM(stock_quantity), 0)
+FROM products;
+```
+
+**Q22. What is a transaction?**  
+A transaction is a group of database operations treated as one unit of work.
+
+**Q23. What is COMMIT?**  
+COMMIT saves changes made in a transaction.
+
+**Q24. What is ROLLBACK?**  
+ROLLBACK cancels uncommitted changes in a transaction.
+
+**Q25. What is an index?**  
+An index can help the database find records faster.
+
+## 26. Final Commands to Check the Actual Project Database
+
+Run these commands in phpMyAdmin's SQL tab or the MariaDB/MySQL command line:
+
+```sql
+USE inventory_sales_db;
+
+SHOW TABLES;
+
+DESCRIBE categories;
+DESCRIBE suppliers;
+DESCRIBE products;
+DESCRIBE sales;
+DESCRIBE sale_items;
+DESCRIBE stock_movements;
+DESCRIBE audit_log;
+
+SELECT * FROM products;
+
+SELECT COUNT(*) AS total_products
+FROM products;
+
+SELECT COALESCE(SUM(stock_quantity), 0) AS total_stock
+FROM products;
+
+SELECT COUNT(*) AS low_stock_count
+FROM products
+WHERE stock_quantity <= reorder_level;
+
+SELECT VERSION();
+```
+
+These commands help verify the actual schema, current data, database version, and dashboard calculations.
+
+## 27. Important Notes
+
+1. Do not claim that every SQL example is already used by the application.
+2. Do not execute destructive commands such as DROP, TRUNCATE, or unrestricted DELETE on the real project database.
+3. Verify column names using `DESCRIBE` before executing project-specific queries.
+4. Verify the actual database server and software versions rather than guessing.
+5. Explain only the features that can be demonstrated in the current implementation.
+6. Back up the database before making structural changes.
